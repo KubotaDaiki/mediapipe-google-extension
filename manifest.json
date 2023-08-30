@@ -1,0 +1,19 @@
+{
+  "name": "Sample",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "description": "Sample Chrome Extension",
+  "permissions": ["activeTab", "tabs"],
+  "content_scripts": [
+    {
+      "js": ["index.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["main.js", "resources/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
