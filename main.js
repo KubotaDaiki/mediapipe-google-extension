@@ -7,6 +7,7 @@ const init = async () => {
   const video = document.getElementById("input_video");
   const canvasElement = document.getElementById("output_canvas");
   const canvasCtx = canvasElement.getContext("2d");
+  const moveMessage = document.getElementById("move_message");
 
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
@@ -23,7 +24,6 @@ const init = async () => {
   }
 
   const vision = await FilesetResolver.forVisionTasks(
-    // path/to/wasm/root
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
   );
 
@@ -42,8 +42,8 @@ const init = async () => {
 
   let prevX = null;
   let prevY = null;
-  const threshold = 0.01;
-  const distThreshold = 0.05;
+  const threshold = 0.1;
+  const distThreshold = 0.5;
 
   const renderLoop = () => {
     canvasElement.width = video.videoWidth;
@@ -107,8 +107,10 @@ const init = async () => {
               console.log(x_dist);
               if (x_dist < -1 * threshold) {
                 console.log("手が右に移動しました");
+                moveMessage.textContent = "0";
               } else if (x_dist > threshold) {
                 console.log("手が左に移動しました");
+                moveMessage.textContent = "1";
               }
 
               if (y_dist < -1 * distThreshold) {

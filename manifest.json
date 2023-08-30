@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "manifest_version": 3,
   "description": "Sample Chrome Extension",
-  "permissions": ["activeTab", "tabs"],
+  "permissions": ["activeTab", "tabs", "debugger"],
   "content_scripts": [
     {
       "js": ["index.js"],
@@ -15,5 +15,9 @@
       "resources": ["main.js", "resources/*"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  }
 }

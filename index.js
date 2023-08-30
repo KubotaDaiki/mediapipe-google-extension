@@ -9,10 +9,13 @@ canvasElement.id = "output_canvas";
 canvasElement.width = "1280";
 canvasElement.height = "720";
 
+var pElement = document.createElement("p");
+pElement.id = "move_message";
+
 // video要素とcanvas要素をHTMLに追加
 document.body.appendChild(videoElement);
 document.body.appendChild(canvasElement);
-
+document.body.appendChild(pElement);
 
 // サイトのheadを取得
 const head =
@@ -45,3 +48,17 @@ const script = document.createElement("script");
 script.setAttribute("type", "module");
 script.setAttribute("src", chrome.runtime.getURL("main.js"));
 head.insertBefore(script, head.lastChild);
+
+setInterval(function () {
+  moveMessage = document.getElementById("move_message");
+  if (moveMessage.textContent) {
+    const getMessage = function () {
+      return moveMessage.textContent;
+    };
+
+    chrome.runtime.sendMessage(getMessage(), function (response) {
+      return true;
+    });
+    moveMessage.textContent = "";
+  }
+}, 10);
