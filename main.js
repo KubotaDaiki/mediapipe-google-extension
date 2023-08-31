@@ -1,12 +1,17 @@
 const init = async () => {
+  // 拡張機能のパスと結合する必要があるため、動的インポート
   const extensionRootPath = sessionStorage.getItem("extension_root_path");
   let { HandLandmarker, FilesetResolver } = await import(
     extensionRootPath + "resources/tasks-vision@0.10.0.js"
   );
+
+  // 必要なElementを取得
   const video = document.getElementById("input_video");
   const canvasElement = document.getElementById("output_canvas");
   const canvasCtx = canvasElement.getContext("2d");
   const moveMessage = document.getElementById("move_message");
+
+  // カメラの設定
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -25,6 +30,7 @@ const init = async () => {
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
   );
 
+  // 手の形状認識における設定
   const handLandmarker = await HandLandmarker.createFromOptions(vision, {
     baseOptions: {
       modelAssetPath: extensionRootPath + "resources/hand_landmarker.task", //.taskファイルを指定する
@@ -32,15 +38,14 @@ const init = async () => {
     },
     numHands: 1, //認識できる手の数
   });
-
   await handLandmarker.setOptions({ runningMode: "video" });
 
   let lastVideoTime = -1;
-
   let prevX = null;
   let prevY = null;
   const threshold = 0.1;
   const distThreshold = 0.5;
+
   const renderLoop = () => {
     const toggle = sessionStorage.getItem("sessionEnableToggle");
     if (toggle == 1) {
@@ -48,6 +53,7 @@ const init = async () => {
       if (video.currentTime > 0 && video.currentTime !== lastVideoTime) {
         const results = handLandmarker.detectForVideo(video, startTimeMs);
         lastVideoTime = video.currentTime;
+
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         canvasCtx.drawImage(
@@ -57,6 +63,7 @@ const init = async () => {
           canvasElement.width,
           canvasElement.height
         );
+
         if (results.landmarks) {
           for (const landmarks of results.landmarks) {
             drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
