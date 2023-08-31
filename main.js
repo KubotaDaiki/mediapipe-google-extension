@@ -9,7 +9,6 @@ const init = async () => {
   const video = document.getElementById("input_video");
   const canvasElement = document.getElementById("output_canvas");
   const canvasCtx = canvasElement.getContext("2d");
-  const moveMessage = document.getElementById("move_message");
 
   // カメラの設定
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -105,10 +104,10 @@ const init = async () => {
                 console.log(x_dist);
                 if (x_dist < -1 * threshold) {
                   // console.log("手が右に移動しました");
-                  moveMessage.textContent = "0";
+                  sessionStorage.setItem("move_message", "0");
                 } else if (x_dist > threshold) {
                   // console.log("手が左に移動しました");
-                  moveMessage.textContent = "1";
+                  sessionStorage.setItem("move_message", "1");
                 }
 
                 if (y_dist < -1 * distThreshold) {

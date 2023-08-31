@@ -13,15 +13,9 @@ canvasElement.width = "160";
 canvasElement.height = "120";
 canvasElement.style = "position:fixed; top:0; right:0; z-index:10000;";
 
-//
-let pElement = document.createElement("p");
-pElement.id = "move_message";
-pElement.style = "display:none;";
-
 // video要素とcanvas要素をHTMLに追加
 document.body.appendChild(videoElement);
 document.body.appendChild(canvasElement);
-document.body.appendChild(pElement);
 
 // サイトのheadを取得
 const head =
@@ -57,16 +51,16 @@ head.insertBefore(mainScript, head.lastChild);
 
 // main.jsの動作情報をbackground.jsに流す
 setInterval(function () {
-  moveMessage = document.getElementById("move_message");
-  if (moveMessage.textContent) {
+  const moveMessage = sessionStorage.getItem("move_message");
+  if (moveMessage) {
     const getMessage = function () {
-      return moveMessage.textContent;
+      return moveMessage;
     };
 
     chrome.runtime.sendMessage(getMessage(), function (response) {
       return true;
     });
-    moveMessage.textContent = "";
+    sessionStorage.setItem("move_message", "");
   }
 }, 10);
 
@@ -81,4 +75,4 @@ setInterval(function () {
       switching = value_data;
     }
   });
-}, 1000);
+}, 500);
