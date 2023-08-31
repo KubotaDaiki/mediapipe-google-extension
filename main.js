@@ -1,14 +1,12 @@
-import {
-  HandLandmarker,
-  FilesetResolver,
-} from "chrome-extension://cljpmlcbcbegfdiceefolbifhbngoefm/resources/tasks-vision@0.10.0.js";
-
 const init = async () => {
+  const extensionRootPath = sessionStorage.getItem("extension_root_path");
+  let { HandLandmarker, FilesetResolver } = await import(
+    extensionRootPath + "resources/tasks-vision@0.10.0.js"
+  );
   const video = document.getElementById("input_video");
   const canvasElement = document.getElementById("output_canvas");
   const canvasCtx = canvasElement.getContext("2d");
   const moveMessage = document.getElementById("move_message");
-
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -29,8 +27,7 @@ const init = async () => {
 
   const handLandmarker = await HandLandmarker.createFromOptions(vision, {
     baseOptions: {
-      modelAssetPath:
-        "chrome-extension://cljpmlcbcbegfdiceefolbifhbngoefm/resources/hand_landmarker.task", //.taskファイルを指定する
+      modelAssetPath: extensionRootPath + "resources/hand_landmarker.task", //.taskファイルを指定する
       delegate: "CPU", //CPU or GPUで処理するかを指定する
     },
     numHands: 1, //認識できる手の数

@@ -1,15 +1,17 @@
+sessionStorage.setItem("extension_root_path", chrome.runtime.getURL("/"));
+
 // video要素を作成
-var videoElement = document.createElement("video");
+let videoElement = document.createElement("video");
 videoElement.id = "input_video";
 videoElement.style.display = "none";
 
 // canvas要素を作成
-var canvasElement = document.createElement("canvas");
+let canvasElement = document.createElement("canvas");
 canvasElement.id = "output_canvas";
 canvasElement.width = "1280";
 canvasElement.height = "720";
 
-var pElement = document.createElement("p");
+let pElement = document.createElement("p");
 pElement.id = "move_message";
 
 // video要素とcanvas要素をHTMLに追加
@@ -24,7 +26,6 @@ const head =
   document.documentElement;
 
 // scriptをインジェクション
-
 const script2 = document.createElement("script");
 script2.setAttribute(
   "src",
