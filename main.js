@@ -52,23 +52,36 @@ const init = async () => {
       if (video.currentTime > 0 && video.currentTime !== lastVideoTime) {
         const results = handLandmarker.detectForVideo(video, startTimeMs);
         lastVideoTime = video.currentTime;
-
-        canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        canvasCtx.drawImage(
-          video,
-          0,
-          0,
-          canvasElement.width,
-          canvasElement.height
-        );
+        const videoToggle = sessionStorage.getItem("sessionVideoToggle");
+        if (videoToggle == 0) {
+          canvasCtx.save();
+          canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+          canvasCtx.drawImage(
+            video,
+            0,
+            0,
+            canvasElement.width,
+            canvasElement.height
+          );
+        } else {
+          canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        }
 
         if (results.landmarks) {
           for (const landmarks of results.landmarks) {
-            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-              color: "#00FF00",
-              lineWidth: 1,
-            });
+            if (videoToggle == 0) {
+              drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+                color: "#00FF00",
+                lineWidth: 1,
+              });
+            } else {
+              canvasCtx.clearRect(
+                0,
+                0,
+                canvasElement.width,
+                canvasElement.height
+              );
+            }
 
             const tip0 = landmarks[5];
             const tip1 = landmarks[6];
