@@ -8,11 +8,13 @@ videoElement.style.display = "none";
 // canvas要素を作成
 let canvasElement = document.createElement("canvas");
 canvasElement.id = "output_canvas";
-canvasElement.width = "1280";
-canvasElement.height = "720";
+canvasElement.width = "160";
+canvasElement.height = "120";
+canvasElement.style = "position:fixed; top:0; right:0; z-index:10000;";
 
 let pElement = document.createElement("p");
 pElement.id = "move_message";
+pElement.style = "display:none;";
 
 // video要素とcanvas要素をHTMLに追加
 document.body.appendChild(videoElement);
@@ -63,3 +65,23 @@ setInterval(function () {
     moveMessage.textContent = "";
   }
 }, 10);
+
+let switching = -1;
+setInterval(function () {
+  chrome.storage.local.get("enableToggle", function (value) {
+    let value_data = value.enableToggle;
+
+    if (value_data != switching) {
+      if (value_data == 1) {
+        sessionStorage.setItem("sessionEnableToggle", "1");
+        switching = 1;
+        console.log("val1");
+      } else if (value_data == 0) {
+        sessionStorage.setItem("sessionEnableToggle", "0");
+        switching = 0;
+        console.log("val0");
+      }
+    }
+    // console.log(value_data);
+  });
+}, 1000);
