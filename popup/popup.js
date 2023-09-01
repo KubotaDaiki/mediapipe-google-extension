@@ -21,7 +21,7 @@ switchOuter1.addEventListener("click", () => {
     } else {
       set_data = 1;
     }
-    // main.jsへ情報を送るために、ストレージに情報をセット
+    // hand_detection.jsへ情報を送るために、ストレージに情報をセット
     chrome.storage.local.set({ enableToggle: set_data }, function () {});
     // console.log(set_data);
   });
@@ -54,7 +54,7 @@ switchOuter2.addEventListener("click", () => {
     } else {
       set_data = 1;
     }
-    // main.jsへ情報を送るために、ストレージに情報をセット
+    // hand_detection.jsへ情報を送るために、ストレージに情報をセット
     chrome.storage.local.set({ videoToggle: set_data }, function () {});
     // console.log(set_data);
   });

@@ -3,7 +3,7 @@ async function t() {
   return (await chrome.tabs.query({ active: !0, currentWindow: !0 }))[0];
 }
 
-// index.jsから動作情報を受け取った時に発火するイベント
+// script.jsから動作情報を受け取った時に発火するイベント
 chrome.runtime.onMessage.addListener(function (info, sendResponse) {
   (async function () {
     const tab = await t();
@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener(function (info, sendResponse) {
 
     chrome.debugger.attach({ tabId: tab.id }, "1.3");
 
-    // キーボードを動かす
+    // キーボードを操作する
     if (info == "0") {
       chrome.debugger.sendCommand(
         { tabId: tab.id },

@@ -1,9 +1,9 @@
-// video要素を作成
+// hand_detection.jsに必要なvideo要素を作成
 let videoElement = document.createElement("video");
 videoElement.id = "input_video";
 videoElement.style.display = "none";
 
-// canvas要素を作成
+// hand_detection.jsに必要なcanvas要素を作成
 let canvasElement = document.createElement("canvas");
 canvasElement.id = "output_canvas";
 canvasElement.width = "160";
@@ -14,40 +14,36 @@ canvasElement.style = "position:fixed; top:0; right:0; z-index:10000;";
 document.body.appendChild(videoElement);
 document.body.appendChild(canvasElement);
 
-// サイトのheadを取得
-const head =
-  document.head ||
-  document.getElementsByTagName("head")[0] ||
-  document.documentElement;
+let libraryPaths = [
+  "resources/drawing_utils.js",
+  "resources/hands.js",
+  "resources/camera_utils.js",
+  "hand_detection.js",
+];
+// ライブラリとhand_detection.jsをHTMLに追加
+for (const libraryPath of libraryPaths) {
+  const library = document.createElement("script");
+  library.setAttribute("src", chrome.runtime.getURL(libraryPath));
+  document.head.appendChild(library);
+}
 
-// ライブラリをhtmlに挿入
-const library1 = document.createElement("script");
-library1.setAttribute(
-  "src",
-  chrome.runtime.getURL("resources/drawing_utils.js")
-);
-head.insertBefore(library1, head.lastChild);
-
-const library2 = document.createElement("script");
-library2.setAttribute("src", chrome.runtime.getURL("resources/hands.js"));
-head.insertBefore(library2, head.lastChild);
-
-const library3 = document.createElement("script");
-library3.setAttribute(
-  "src",
-  chrome.runtime.getURL("resources/camera_utils.js")
-);
-head.insertBefore(library3, head.lastChild);
-
+// popupのトグル情報ををhand_detection.jsに送る用のHTML要素を生成
 let enableToggleElement = document.createElement("p");
 enableToggleElement.id = "enableToggle";
+chrome.storage.local.get("enableToggle", function (value) {
+  enableToggleElement.setAttribute("value", value.enableToggle);
+});
 document.body.appendChild(enableToggleElement);
 
+// popupのトグル情報ををhand_detection.jsに送る用のHTML要素を生成
 let videoToggleElement = document.createElement("p");
 videoToggleElement.id = "videoToggle";
+chrome.storage.local.get("videoToggle", function (value) {
+  videoToggleElement.setAttribute("value", value.videoToggle);
+});
 document.body.appendChild(videoToggleElement);
 
-// popup.jsの情報をmain.jsに流す
+// popupのトグル情報をhand_detection.jsに送る
 chrome.storage.onChanged.addListener(function (changes, ns) {
   if (changes.enableToggle) {
     enableToggleElement.setAttribute("value", changes.enableToggle.newValue);
@@ -57,24 +53,12 @@ chrome.storage.onChanged.addListener(function (changes, ns) {
   // console.log(changes);
 });
 
-chrome.storage.local.get("enableToggle", function (value) {
-  enableToggleElement.setAttribute("value", value.enableToggle);
-});
-chrome.storage.local.get("videoToggle", function (value) {
-  videoToggleElement.setAttribute("value", value.videoToggle);
-});
-
-// main.js（手の形状認識を行うscript）をhtmlに挿入
-const mainScript = document.createElement("script");
-mainScript.setAttribute("type", "module");
-mainScript.setAttribute("src", chrome.runtime.getURL("main.js"));
-head.insertBefore(mainScript, head.lastChild);
-
+// hand_detection.jsの動作情報をbackgroundに送るためのHTML要素
 let moveMessageElement = document.createElement("p");
 moveMessageElement.id = "moveMessage";
 document.body.appendChild(moveMessageElement);
 
-// オブザーバーの作成
+// hand_detection.jsの情報をbackgroundに送る
 const observer = new MutationObserver((records) => {
   const moveMessage = moveMessageElement.getAttribute("value");
   const getMessage = function () {
@@ -85,7 +69,7 @@ const observer = new MutationObserver((records) => {
     return true;
   });
 });
-// 監視の開始
+// DOMの変化を監視
 observer.observe(moveMessageElement, {
   attributes: true,
 });

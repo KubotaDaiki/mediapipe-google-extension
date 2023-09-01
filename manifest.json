@@ -10,13 +10,13 @@
   },
   "content_scripts": [
     {
-      "js": ["index.js"],
+      "js": ["script.js"],
       "matches": ["https://www.canva.com/design/*"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["main.js", "resources/*"],
+      "resources": ["hand_detection.js", "resources/*"],
       "matches": ["<all_urls>"]
     }
   ],

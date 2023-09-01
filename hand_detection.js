@@ -9,6 +9,7 @@ const moveMessage = document.getElementById("moveMessage");
 ctx.scale(-1, 1);
 ctx.translate(-canvas.width, 0);
 
+// hand.jsの関連ファイルの読み込みと設定
 const config = {
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
 };
@@ -20,6 +21,7 @@ hands.setOptions({
   minTrackingConfidence: 0.5,
 });
 
+// カメラの設定
 const camera = new Camera(video, {
   onFrame: async () => {
     await hands.send({ image: video });
@@ -28,6 +30,7 @@ const camera = new Camera(video, {
   height: 120,
 });
 
+// 手の移動を検出するために必要な変数の定義
 let prevX = null;
 let prevY = null;
 
@@ -35,11 +38,14 @@ let prevY = null;
 const threshold = 0.1;
 const distThreshold = 0.5;
 
+// enableToggleが1の場合は最初からカメラを起動しておく
 if (enableToggle.getAttribute("value") == 1) {
   camera.start();
 }
 
+// 手の形状を認識した結果を取得
 hands.onResults((results) => {
+  // videoToggleが1の場合は、認識は行うがcanvasを表示させない
   const vToggle = videoToggle.getAttribute("value");
   if (vToggle == 1) {
     hideCanvas();
@@ -47,9 +53,10 @@ hands.onResults((results) => {
     showCanvas();
   }
 
+  // 画像をcanvasに描画
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // console.log(results.image);
   ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+
   if (results.multiHandLandmarks) {
     results.multiHandLandmarks.forEach((landmarks) => {
       drawConnectors(ctx, landmarks, HAND_CONNECTIONS, {
@@ -70,11 +77,9 @@ hands.onResults((results) => {
           if (x_dist < -1 * threshold) {
             // console.log("手が右に移動しました");
             moveMessage.setAttribute("value", "0");
-            // sessionStorage.setItem("move_message", "0");
           } else if (x_dist > threshold) {
             // console.log("手が左に移動しました");
             moveMessage.setAttribute("value", "1");
-            // sessionStorage.setItem("move_message", "1");
           }
 
           if (y_dist < -1 * distThreshold) {
@@ -115,7 +120,7 @@ function calculateDegree(landmarks) {
   return degree;
 }
 
-// オブザーバーの作成
+// script.jsからのトグル情報を取得
 const observer = new MutationObserver((records) => {
   if (enableToggle.getAttribute("value") == 1) {
     showCanvas();
@@ -128,11 +133,12 @@ const observer = new MutationObserver((records) => {
     }, 100);
   }
 });
-// 監視の開始
+// DOMの変化を監視
 observer.observe(enableToggle, {
   attributes: true,
 });
 
+// canvasを表示させる関数
 function showCanvas() {
   canvas.setAttribute(
     "style",
@@ -140,6 +146,7 @@ function showCanvas() {
   );
 }
 
+// canvasを非表示にさせる関数
 function hideCanvas() {
   canvas.setAttribute("style", "visibility:hidden;");
 }
