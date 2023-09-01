@@ -68,3 +68,12 @@ chrome.storage.onChanged.addListener(function (changes, ns) {
   }
   // console.log(changes);
 });
+
+// sessionStorageの初期値を設定
+chrome.storage.local.get("enableToggle", function (value) {
+  console.log()
+  sessionStorage.setItem("sessionEnableToggle", value.enableToggle);
+});
+chrome.storage.local.get("videoToggle", function (value) {
+  sessionStorage.setItem("sessionVideoToggle", value.videoToggle);
+});
