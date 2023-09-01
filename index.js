@@ -39,21 +39,6 @@ library3.setAttribute(
 );
 head.insertBefore(library3, head.lastChild);
 
-// main.jsの動作情報をbackground.jsに流す
-setInterval(function () {
-  const moveMessage = sessionStorage.getItem("move_message");
-  if (moveMessage) {
-    const getMessage = function () {
-      return moveMessage;
-    };
-
-    chrome.runtime.sendMessage(getMessage(), function (response) {
-      return true;
-    });
-    sessionStorage.setItem("move_message", "");
-  }
-}, 10);
-
 let enableToggleElement = document.createElement("p");
 enableToggleElement.id = "enableToggle";
 document.body.appendChild(enableToggleElement);
@@ -72,7 +57,6 @@ chrome.storage.onChanged.addListener(function (changes, ns) {
   // console.log(changes);
 });
 
-
 chrome.storage.local.get("enableToggle", function (value) {
   enableToggleElement.setAttribute("value", value.enableToggle);
 });
@@ -85,3 +69,23 @@ const mainScript = document.createElement("script");
 mainScript.setAttribute("type", "module");
 mainScript.setAttribute("src", chrome.runtime.getURL("main.js"));
 head.insertBefore(mainScript, head.lastChild);
+
+let moveMessageElement = document.createElement("p");
+moveMessageElement.id = "moveMessage";
+document.body.appendChild(moveMessageElement);
+
+// オブザーバーの作成
+const observer = new MutationObserver((records) => {
+  const moveMessage = moveMessageElement.getAttribute("value");
+  const getMessage = function () {
+    return moveMessage;
+  };
+
+  chrome.runtime.sendMessage(getMessage(), function (response) {
+    return true;
+  });
+});
+// 監視の開始
+observer.observe(moveMessageElement, {
+  attributes: true,
+});

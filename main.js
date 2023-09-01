@@ -3,6 +3,7 @@ const canvas = document.getElementById("output_canvas");
 const ctx = canvas.getContext("2d");
 const videoToggle = document.getElementById("videoToggle");
 const enableToggle = document.getElementById("enableToggle");
+const moveMessage = document.getElementById("moveMessage");
 
 // canvasを左右反転
 ctx.scale(-1, 1);
@@ -68,10 +69,12 @@ hands.onResults((results) => {
           // console.log(x_dist);
           if (x_dist < -1 * threshold) {
             // console.log("手が右に移動しました");
-            sessionStorage.setItem("move_message", "0");
+            moveMessage.setAttribute("value", "0");
+            // sessionStorage.setItem("move_message", "0");
           } else if (x_dist > threshold) {
             // console.log("手が左に移動しました");
-            sessionStorage.setItem("move_message", "1");
+            moveMessage.setAttribute("value", "1");
+            // sessionStorage.setItem("move_message", "1");
           }
 
           if (y_dist < -1 * distThreshold) {
