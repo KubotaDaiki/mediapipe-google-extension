@@ -56,8 +56,8 @@ const init = async () => {
         const results = handLandmarker.detectForVideo(video, startTimeMs);
         lastVideoTime = video.currentTime;
         const videoToggle = sessionStorage.getItem("sessionVideoToggle");
-        // videoToggleがONになっている時のみ映像を出力する
-        if (videoToggle == 0) {
+        // videoToggleがONになっている時のみ映像を出力しない
+        if (videoToggle != 1) {
           canvasCtx.save();
           canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
           canvasCtx.drawImage(
@@ -73,8 +73,8 @@ const init = async () => {
 
         if (results.landmarks) {
           for (const landmarks of results.landmarks) {
-            // videoToggleがONになっている時のみ映像を出力する
-            if (videoToggle == 0) {
+            // videoToggleがONになっている時のみ映像を出力しない
+            if (videoToggle != 1) {
               drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
                 color: "#00FF00",
                 lineWidth: 1,
