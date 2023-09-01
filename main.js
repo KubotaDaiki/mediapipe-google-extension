@@ -34,6 +34,10 @@ let prevY = null;
 const threshold = 0.1;
 const distThreshold = 0.5;
 
+if (enableToggle.getAttribute("value") == 1) {
+  camera.start();
+}
+
 hands.onResults((results) => {
   const vToggle = videoToggle.getAttribute("value");
   if (vToggle == 1) {

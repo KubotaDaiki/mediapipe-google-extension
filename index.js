@@ -72,6 +72,14 @@ chrome.storage.onChanged.addListener(function (changes, ns) {
   // console.log(changes);
 });
 
+
+chrome.storage.local.get("enableToggle", function (value) {
+  enableToggleElement.setAttribute("value", value.enableToggle);
+});
+chrome.storage.local.get("videoToggle", function (value) {
+  videoToggleElement.setAttribute("value", value.videoToggle);
+});
+
 // main.js（手の形状認識を行うscript）をhtmlに挿入
 const mainScript = document.createElement("script");
 mainScript.setAttribute("type", "module");
