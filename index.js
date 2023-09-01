@@ -35,14 +35,6 @@ const library2 = document.createElement("script");
 library2.setAttribute("src", chrome.runtime.getURL("resources/hands.js"));
 head.insertBefore(library2, head.lastChild);
 
-const library3 = document.createElement("script");
-library3.setAttribute(
-  "src",
-  chrome.runtime.getURL("resources/vision_bundle.js")
-);
-library3.setAttribute("type", "modele");
-head.insertBefore(library3, head.lastChild);
-
 // main.js（手の形状認識を行うscript）をhtmlに挿入
 const mainScript = document.createElement("script");
 mainScript.setAttribute("type", "module");

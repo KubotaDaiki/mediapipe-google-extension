@@ -87,7 +87,7 @@ const init = async () => {
                 canvasElement.height
               );
             }
-            degree = calculateDegree(landmarks);
+            const degree = calculateDegree(landmarks);
             if (degree > 60) {
               prevX = null;
               prevY = null;
