@@ -57,25 +57,14 @@ setInterval(function () {
 }, 10);
 
 // popup.jsの情報をmain.jsに流す
-let switching1 = -1;
-let switching2 = -1;
-setInterval(function () {
-  chrome.storage.local.get("enableToggle", function (value) {
-    let value_data = value.enableToggle;
-
-    // 値が変化した時のみストレージに格納する
-    if (value_data != switching1) {
-      sessionStorage.setItem("sessionEnableToggle", value_data);
-      switching1 = value_data;
-    }
-  });
-  chrome.storage.local.get("videoToggle", function (value) {
-    let value_data = value.videoToggle;
-
-    // 値が変化した時のみストレージに格納する
-    if (value_data != switching2) {
-      sessionStorage.setItem("sessionVideoToggle", value_data);
-      switching2 = value_data;
-    }
-  });
-}, 500);
+chrome.storage.onChanged.addListener(function (changes, ns) {
+  if (changes.enableToggle) {
+    sessionStorage.setItem(
+      "sessionEnableToggle",
+      changes.enableToggle.newValue
+    );
+  } else if (changes.videoToggle) {
+    sessionStorage.setItem("sessionVideoToggle", changes.videoToggle.newValue);
+  }
+  // console.log(changes);
+});
