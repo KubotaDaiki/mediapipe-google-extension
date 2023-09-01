@@ -1,6 +1,3 @@
-// main.jsで拡張機能のリソースにアクセスできるよう、パスをストレージに格納
-sessionStorage.setItem("extension_root_path", chrome.runtime.getURL("/"));
-
 // video要素を作成
 let videoElement = document.createElement("video");
 videoElement.id = "input_video";
@@ -35,11 +32,12 @@ const library2 = document.createElement("script");
 library2.setAttribute("src", chrome.runtime.getURL("resources/hands.js"));
 head.insertBefore(library2, head.lastChild);
 
-// main.js（手の形状認識を行うscript）をhtmlに挿入
-const mainScript = document.createElement("script");
-mainScript.setAttribute("type", "module");
-mainScript.setAttribute("src", chrome.runtime.getURL("main.js"));
-head.insertBefore(mainScript, head.lastChild);
+const library3 = document.createElement("script");
+library3.setAttribute(
+  "src",
+  chrome.runtime.getURL("resources/camera_utils.js")
+);
+head.insertBefore(library3, head.lastChild);
 
 // main.jsの動作情報をbackground.jsに流す
 setInterval(function () {
@@ -56,24 +54,26 @@ setInterval(function () {
   }
 }, 10);
 
+let enableToggleElement = document.createElement("p");
+enableToggleElement.id = "enableToggle";
+document.body.appendChild(enableToggleElement);
+
+let videoToggleElement = document.createElement("p");
+videoToggleElement.id = "videoToggle";
+document.body.appendChild(videoToggleElement);
+
 // popup.jsの情報をmain.jsに流す
 chrome.storage.onChanged.addListener(function (changes, ns) {
   if (changes.enableToggle) {
-    sessionStorage.setItem(
-      "sessionEnableToggle",
-      changes.enableToggle.newValue
-    );
+    enableToggleElement.setAttribute("value", changes.enableToggle.newValue);
   } else if (changes.videoToggle) {
-    sessionStorage.setItem("sessionVideoToggle", changes.videoToggle.newValue);
+    videoToggleElement.setAttribute("value", changes.videoToggle.newValue);
   }
   // console.log(changes);
 });
 
-// sessionStorageの初期値を設定
-chrome.storage.local.get("enableToggle", function (value) {
-  console.log()
-  sessionStorage.setItem("sessionEnableToggle", value.enableToggle);
-});
-chrome.storage.local.get("videoToggle", function (value) {
-  sessionStorage.setItem("sessionVideoToggle", value.videoToggle);
-});
+// main.js（手の形状認識を行うscript）をhtmlに挿入
+const mainScript = document.createElement("script");
+mainScript.setAttribute("type", "module");
+mainScript.setAttribute("src", chrome.runtime.getURL("main.js"));
+head.insertBefore(mainScript, head.lastChild);
