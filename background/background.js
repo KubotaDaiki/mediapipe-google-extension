@@ -7,6 +7,7 @@ async function t() {
 chrome.runtime.onMessage.addListener(function (info, sendResponse) {
   (async function () {
     const tab = await t();
+
     const arrowDown = {
       type: "keyDown",
       key: "ArrowDown",

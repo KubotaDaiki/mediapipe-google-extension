@@ -42,17 +42,21 @@ const init = async () => {
   let lastVideoTime = -1;
   let prevX = null;
   let prevY = null;
+
+  // 手の移動における閾値
   const threshold = 0.1;
   const distThreshold = 0.5;
 
   const renderLoop = () => {
     const toggle = sessionStorage.getItem("sessionEnableToggle");
+    // toggleがONになっている時のみ手の認識をする
     if (toggle == 1) {
       let startTimeMs = performance.now();
       if (video.currentTime > 0 && video.currentTime !== lastVideoTime) {
         const results = handLandmarker.detectForVideo(video, startTimeMs);
         lastVideoTime = video.currentTime;
         const videoToggle = sessionStorage.getItem("sessionVideoToggle");
+        // videoToggleがONになっている時のみ映像を出力する
         if (videoToggle == 0) {
           canvasCtx.save();
           canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -69,6 +73,7 @@ const init = async () => {
 
         if (results.landmarks) {
           for (const landmarks of results.landmarks) {
+            // videoToggleがONになっている時のみ映像を出力する
             if (videoToggle == 0) {
               drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
                 color: "#00FF00",
@@ -82,29 +87,7 @@ const init = async () => {
                 canvasElement.height
               );
             }
-
-            const tip0 = landmarks[5];
-            const tip1 = landmarks[6];
-            const tip2 = landmarks[7];
-
-            const angle =
-              (((tip0.x - tip1.x) * (tip2.x - tip1.x) +
-                (tip0.y - tip1.y) * (tip2.y - tip1.y) +
-                (tip0.z - tip1.z) * (tip2.z - tip1.z)) /
-                (Math.sqrt(
-                  (tip0.x - tip1.x) ** 2 +
-                    (tip0.y - tip1.y) ** 2 +
-                    (tip0.z - tip1.z) ** 2
-                ) *
-                  Math.sqrt(
-                    (tip2.x - tip1.x) ** 2 +
-                      (tip2.y - tip1.y) ** 2 +
-                      (tip2.z - tip1.z) ** 2
-                  ))) *
-              -1;
-            const radian = Math.acos(angle);
-            const degree = radian * (180 / Math.PI);
-
+            degree = calculateDegree(landmarks);
             if (degree > 60) {
               prevX = null;
               prevY = null;
@@ -114,7 +97,7 @@ const init = async () => {
               if (prevX && prevY) {
                 const x_dist = landmarks[0].x - prevX;
                 const y_dist = landmarks[0].y - prevY;
-                console.log(x_dist);
+                // console.log(x_dist);
                 if (x_dist < -1 * threshold) {
                   // console.log("手が右に移動しました");
                   sessionStorage.setItem("move_message", "0");
@@ -147,5 +130,29 @@ const init = async () => {
 
   renderLoop();
 };
+
+// ベクトル間の角度を計算する関数
+function calculateDegree(landmarks) {
+  const tip0 = landmarks[5];
+  const tip1 = landmarks[6];
+  const tip2 = landmarks[7];
+
+  const angle =
+    (((tip0.x - tip1.x) * (tip2.x - tip1.x) +
+      (tip0.y - tip1.y) * (tip2.y - tip1.y) +
+      (tip0.z - tip1.z) * (tip2.z - tip1.z)) /
+      (Math.sqrt(
+        (tip0.x - tip1.x) ** 2 + (tip0.y - tip1.y) ** 2 + (tip0.z - tip1.z) ** 2
+      ) *
+        Math.sqrt(
+          (tip2.x - tip1.x) ** 2 +
+            (tip2.y - tip1.y) ** 2 +
+            (tip2.z - tip1.z) ** 2
+        ))) *
+    -1;
+  const radian = Math.acos(angle);
+  const degree = radian * (180 / Math.PI);
+  return degree;
+}
 
 init();

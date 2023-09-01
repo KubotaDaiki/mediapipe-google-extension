@@ -35,7 +35,7 @@ switchOuter1.addEventListener("click", () => {
 const switchOuter2 = document.querySelector("#so2");
 const toggleSwitch2 = document.querySelector("#ts2");
 
-// enableToggleが1の場合はトグルをあらかじめONにしておく
+// videoToggleが1の場合はトグルをあらかじめONにしておく
 chrome.storage.local.get("videoToggle", function (value) {
   let value_data = value.videoToggle;
   if (value_data == 1) {

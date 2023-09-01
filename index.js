@@ -71,6 +71,7 @@ setInterval(function () {
   chrome.storage.local.get("enableToggle", function (value) {
     let value_data = value.enableToggle;
 
+    // 値が変化した時のみストレージに格納する
     if (value_data != switching1) {
       sessionStorage.setItem("sessionEnableToggle", value_data);
       switching1 = value_data;
@@ -79,6 +80,7 @@ setInterval(function () {
   chrome.storage.local.get("videoToggle", function (value) {
     let value_data = value.videoToggle;
 
+    // 値が変化した時のみストレージに格納する
     if (value_data != switching2) {
       sessionStorage.setItem("sessionVideoToggle", value_data);
       switching2 = value_data;
